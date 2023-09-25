@@ -12,7 +12,7 @@ def add_cors_headers(response):
     return response
 
 db = mysql.connector.connect(
-    host="DESKTOP-S594G9A",  # Use localhost if MySQL is on the same machine
+    host="192.168.1.8",  # Use localhost if MySQL is on the same machine
     user="Aditya",
     password="Aditya1!",
     database="book_management2"
