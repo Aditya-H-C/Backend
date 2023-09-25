@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.7
 from flask import Flask, request, jsonify
 import mysql.connector
 
