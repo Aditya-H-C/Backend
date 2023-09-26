@@ -1,7 +1,25 @@
 from flask import Flask, request, jsonify
 import mysql.connector
+import yaml
+import os
 
 app = Flask(__name__)
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+config_file_path = os.path.join(script_dir, 'config.yaml')
+
+# Load the configuration from config.yaml
+with open(config_file_path, 'r') as config_file:
+    try:
+        config = yaml.safe_load(config_file)
+        if config is None:
+            raise ValueError("Config file is empty or contains no valid YAML data.")
+    except yaml.YAMLError as e:
+        print("Error loading config.yaml:", e)
+
+# Database configuration
+db_config = config['db']
+
 
 # Enable CORS by adding the appropriate headers to all responses
 @app.after_request
@@ -12,11 +30,13 @@ def add_cors_headers(response):
     return response
 
 db = mysql.connector.connect(
-    host="192.168.1.8",  # Use localhost if MySQL is on the same machine
-    user="Aditya",
-    password="Aditya1!",
-    database="book_management2"
+    host=db_config['host'],
+    user=db_config['user'],
+    password=db_config['password'],
+    database=db_config['database']
 )
+
+
 cursor = db.cursor()
 
 # Create a book
@@ -167,4 +187,4 @@ def delete_book(book_id):
     return jsonify({"message": "Book deleted successfully"}), 200
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0",port='8080',ssl_context=("cert.pem","key.pem"))
+    app.run(host="0.0.0.0", port=config['app']['port'], ssl_context=(config['app']['ssl_cert'], config['app']['ssl_key']))
